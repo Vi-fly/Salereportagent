@@ -202,15 +202,15 @@ def recommendation_report_agent(customer_profile, pattern_analysis, affinity_ana
     """
     
     try:
+        from groq import Groq
         client = Groq(api_key=os.getenv("GROQ_API_KEY"))
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama3-70b-8192",
             messages=[
                 {"role": "system", "content": "You are a senior B2B sales analyst with expertise in customer analysis and opportunity identification."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            max_tokens=2000
         )
         report = response.choices[0].message.content
     except Exception as e:
