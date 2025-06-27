@@ -6,7 +6,7 @@ from agents import (
     opportunity_scoring_agent,
     recommendation_report_agent
 )
-from typing import Dict, TypedDict, Annotated
+from typing import Dict, TypedDict
 import pandas as pd
 
 class AgentState(TypedDict):
