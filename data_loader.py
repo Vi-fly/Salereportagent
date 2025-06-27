@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-import psycopg2
 from dotenv import load_dotenv
 import csv
 from typing import List, Dict
@@ -47,18 +46,4 @@ def load_customer_data_csv(file_path: str) -> pd.DataFrame:
         return df
     except Exception as e:
         print(f"❌ Error loading CSV: {e}")
-        raise
-
-# Bonus: PostgreSQL loader
-def load_customer_data_postgres():
-    conn = psycopg2.connect(
-        dbname=os.getenv('PG_DB'),
-        user=os.getenv('PG_USER'),
-        password=os.getenv('PG_PASSWORD'),
-        host=os.getenv('PG_HOST'),
-        port=os.getenv('PG_PORT', 5432)
-    )
-    query = "SELECT * FROM customer_data;"
-    df = pd.read_sql(query, conn)
-    conn.close()
-    return df 
+        raise 
