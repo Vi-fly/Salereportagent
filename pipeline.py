@@ -6,7 +6,7 @@ from agents import (
     opportunity_scoring_agent,
     recommendation_report_agent
 )
-from typing import Dict, TypedDict
+from typing import Dict, TypedDict, Annotated
 import pandas as pd
 
 class AgentState(TypedDict):
@@ -23,6 +23,8 @@ def build_pipeline(customer_data: pd.DataFrame):
     # Step 1: Customer Context
     def context_node(state: AgentState) -> AgentState:
         profile = customer_context_agent(state['customer_id'], customer_data)
+        if not profile:
+            raise ValueError(f"Customer {state['customer_id']} not found")
         return {**state, 'customer_profile': profile}
 
     # Step 2: Purchase Pattern

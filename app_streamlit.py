@@ -55,35 +55,26 @@ def load_pipeline():
         customer_data = load_data()
         if customer_data is not None:
             pipeline = build_pipeline(customer_data)
-            return pipeline, True  # LangGraph
+            return pipeline
     except Exception as e:
-        st.warning(f"LangGraph failed, using simple pipeline: {e}")
-        try:
-            from simple_pipeline import SimplePipeline
-            customer_data = load_data()
-            if customer_data is not None:
-                pipeline = SimplePipeline(customer_data)
-                return pipeline, False  # Simple
-        except Exception as e2:
-            st.error(f"Both pipelines failed: {e2}")
-            return None, None
-    return None, None
+        st.error(f"LangGraph pipeline failed: {e}")
+        return None
 
 # Load customer IDs and pipeline
 customer_ids = load_customer_ids()
-pipeline, use_langgraph = load_pipeline()
+pipeline = load_pipeline()
 
 if not customer_ids:
     st.error("Failed to load customer IDs. Please check if customer_data.csv exists.")
     st.stop()
 
 if pipeline is None:
-    st.error("Failed to initialize pipeline.")
+    st.error("Failed to initialize LangGraph pipeline.")
     st.stop()
 
 # Sidebar
 st.sidebar.header("Configuration")
-st.sidebar.write(f"Pipeline type: {'LangGraph' if use_langgraph else 'Simple'}")
+st.sidebar.write("Pipeline type: LangGraph")
 
 # Get unique customer IDs
 selected_customer = st.sidebar.selectbox("Select Customer ID", customer_ids)
@@ -107,10 +98,7 @@ if st.sidebar.button("🚀 Run Analysis", type="primary"):
     else:
         with st.spinner("Running AI analysis..."):
             try:
-                if use_langgraph:
-                    result = pipeline.invoke({"customer_id": selected_customer})
-                else:
-                    result = pipeline.run(selected_customer)
+                result = pipeline.invoke({"customer_id": selected_customer})
                 
                 # Store results in session state
                 st.session_state.analysis_results = result
